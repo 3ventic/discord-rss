@@ -29,7 +29,6 @@ setInterval(
   handleFeeds,
   (typeof INTERVAL === "undefined" ? 5 : parseInt(INTERVAL)) * MINUTE
 );
-handleFeeds();
 
 express()
   .use(json())
