@@ -27,7 +27,7 @@ export async function post(req: Request, res: ServerResponse) {
   if (
     feeds.filter(
       (feed) =>
-        feed.hookUrl && feed.name && feed.url && Object.keys(feed).length <= 4
+        feed.hookUrl && feed.name && feed.url && Object.keys(feed).length <= 5
     ).length !== feeds.length
   ) {
     res.writeHead(400, { "Content-Type": "application/json" });

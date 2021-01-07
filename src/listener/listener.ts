@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 import Parser from "rss-parser";
 import { DBName, Processing } from "../const";
 import Storage from "../storage";
-import type { Feed } from "../types";
+import type { DiscordEmbed, Feed } from "../types";
 
 const parser = new Parser();
 
@@ -26,6 +26,18 @@ export const handleFeeds = async () => {
       for (let item of items) {
         console.log(item.link);
         try {
+          let embed: DiscordEmbed = {
+            title: item.title,
+            description: htmlToMarkdown(item.contentSnippet),
+            url: item.link,
+            timestamp: new Date(item.pubDate!).toISOString(),
+            color: getColor(item.content),
+          };
+          if (feeds[i].imageUrl) {
+            embed.thumbnail = {
+              url: feeds[i].imageUrl,
+            };
+          }
           let result = await fetch(`${feeds[i].hookUrl}?wait=true`, {
             method: "post",
             headers: {
@@ -33,15 +45,7 @@ export const handleFeeds = async () => {
             },
             body: JSON.stringify({
               allowed_mentions: [],
-              embeds: [
-                {
-                  title: item.title,
-                  description: htmlToMarkdown(item.contentSnippet),
-                  url: item.link,
-                  timestamp: new Date(item.pubDate!).toISOString(),
-                  color: getColor(item.content),
-                },
-              ],
+              embeds: [embed],
               username: feeds[i].name,
             }),
           });
@@ -60,7 +64,7 @@ export const handleFeeds = async () => {
   await Storage.removeItem(Processing);
 };
 
-function getColor(content: string | undefined): Number {
+function getColor(content: string | undefined): number {
   if (typeof content === "undefined") {
     return 0x0; // black
   }

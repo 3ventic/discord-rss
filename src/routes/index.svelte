@@ -46,6 +46,7 @@
 				},
 				name: "",
 				url: "",
+				imageUrl: "",
 			},
 		];
 	};
@@ -77,7 +78,10 @@
 	<div>
 		<h1>SapDiscoRSS Manager</h1>
 		<p>Changes are not saved until you click save.</p>
-		<p>Name / Title, Link to RSS/Atom feed, Link to Discord webhook</p>
+		<p>
+			Name / Title, Link to RSS/Atom feed, Link to Discord webhook, Link to
+			attachment image (scaled to 50x50px)
+		</p>
 	</div>
 	{#each feeds as feed, i}
 		<div>
@@ -90,6 +94,10 @@
 				type="url"
 				placeholder="https://discord.com/api/webhooks/..."
 				bind:value={feed.hookUrl} />
+			<input
+				type="url"
+				placeholder="https://i.3v.fi/...png"
+				bind:value={feed.imageUrl} />
 			<button
 				on:click={() => {
 					feeds = feeds.splice(i, 1);
