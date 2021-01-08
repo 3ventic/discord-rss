@@ -2,8 +2,6 @@
 
 RSS to Discord webhooks with web management UI.
 
-![](https://i.3v.fi/discorss-ss.png)
-
 ## Usage
 
 ### Docker
@@ -21,3 +19,7 @@ The service can be configured using environment variables. Update interval can b
 ## Security
 
 It is important to either use a reverse proxy with auth or limit access to localhost only. The application itself does not currently have any access control built-in.
+
+## Screenshots
+
+![](https://i.3v.fi/discorss-ss.png)
