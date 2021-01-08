@@ -37,6 +37,7 @@
 			console.error(e);
 			status = `Error. See browser console for details.`;
 		}
+		saving = false;
 	};
 
 	const add = () => {
