@@ -1,15 +1,57 @@
 import type { Request } from "express";
 import type { ServerResponse } from "http";
-import { DBName, Processing } from "../const";
+import { URL } from "url";
+import { DBName, Processing, WebhookUrlMaxLength } from "../const";
 import Storage from "../storage";
 import type { Feed } from "../types";
+
+const valid: (feeds: Feed[]) => boolean = (feeds) => {
+  let names = new Map<string, {}>();
+  for (let feed of feeds) {
+    let acceptedKeys = 0;
+    try {
+      // required URLs
+      new URL(feed.url);
+      new URL(feed.hookUrl);
+      if (feed.hookUrl.length > WebhookUrlMaxLength) {
+        return false;
+      }
+      acceptedKeys += 2;
+    } catch (e) {
+      return false;
+    }
+    try {
+      // optional URLs
+      new URL(feed.imageUrl);
+      acceptedKeys++;
+    } catch (e) {}
+    if (names.has(feed.name)) {
+      return false;
+    } else {
+      names.set(feed.name, Object.create(null));
+      acceptedKeys++;
+    }
+    // ensure no unknown keys made their way in
+    if (Object.keys(feed).length > acceptedKeys) {
+      return false;
+    }
+  }
+  return true;
+};
 
 export async function get(req: Request, res: ServerResponse) {
   res.writeHead(200, {
     "Content-Type": "application/json",
   });
 
-  res.end(JSON.stringify(await Storage.getItem(DBName)));
+  res.end(
+    JSON.stringify(
+      ((await Storage.getItem(DBName)) as Feed[]).map((f) => {
+        f.lastItem = undefined;
+        return f;
+      })
+    )
+  );
 }
 
 export async function post(req: Request, res: ServerResponse) {
@@ -24,12 +66,7 @@ export async function post(req: Request, res: ServerResponse) {
   }
 
   let feeds: Feed[] = req.body;
-  if (
-    feeds.filter(
-      (feed) =>
-        feed.hookUrl && feed.name && feed.url && Object.keys(feed).length <= 5
-    ).length !== feeds.length
-  ) {
+  if (!valid(feeds)) {
     res.writeHead(400, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ message: "invalid feeds" }));
     return;

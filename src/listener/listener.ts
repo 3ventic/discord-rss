@@ -15,7 +15,9 @@ export const handleFeeds = async () => {
     const items = feed.items
       .filter((item) => item.pubDate)
       .filter(
-        (item) => new Date(item.pubDate!) > new Date(feeds[i].lastItem.pubDate!)
+        (item) =>
+          !feeds[i].lastItem ||
+          new Date(item.pubDate!) > new Date(feeds[i].lastItem!.pubDate!)
       )
       .sort(
         (a, b) =>

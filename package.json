@@ -1,5 +1,5 @@
 {
-  "name": "sapdiscorss",
+  "name": "discorss",
   "description": "Manage Discord RSS feeds using webhooks",
   "version": "0.1.1",
   "scripts": {

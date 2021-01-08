@@ -2,7 +2,7 @@ import type { Item } from "rss-parser";
 
 export type Feed = {
   url: string;
-  lastItem: Item;
+  lastItem?: Item;
   hookUrl: string;
   name: string;
   imageUrl: string;

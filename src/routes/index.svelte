@@ -44,9 +44,6 @@
 			...fds,
 			{
 				hookUrl: "",
-				lastItem: {
-					pubDate: new Date().toISOString(),
-				},
 				name: "",
 				url: "",
 				imageUrl: "",
@@ -60,7 +57,7 @@
 			title: feed.name,
 			color: 0x0,
 			description: "Test description",
-			url: "https://github.com/3ventic/sapdiscorss",
+			url: "https://github.com/3ventic/discord-rss",
 			thumbnail: {
 				url: feed.imageUrl || undefined,
 			},
@@ -150,12 +147,12 @@
 </style>
 
 <svelte:head>
-	<title>SapDiscoRSS Settings</title>
+	<title>RSS Settings</title>
 </svelte:head>
 
 <div class="main">
 	<div>
-		<h1>SapDiscoRSS Manager</h1>
+		<h1>Discord RSS Feed Manager</h1>
 	</div>
 	{#each fds as feed, i}
 		<div class="feedwrap">

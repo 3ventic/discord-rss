@@ -1,6 +1,6 @@
-# SapDiscoRSS
+# Discord RSS Feed Manager
 
-RSS to Discord webhooks with web management UI.
+RSS and Atom feeds to Discord webhooks with web management UI.
 
 ## Usage
 
