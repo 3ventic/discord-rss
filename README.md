@@ -22,4 +22,4 @@ It is important to either use a reverse proxy with auth or limit access to local
 
 ## Screenshots
 
-![](https://i.3v.fi/discord-rss.png)
+![](https://meme.stream/fh/TangibleImmediatePartyTime-RSS_Settings__Firefox_Developer_Edition.png)
