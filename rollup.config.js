@@ -1,14 +1,15 @@
-import path from 'path';
+import babel from '@rollup/plugin-babel';
+import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
-import commonjs from '@rollup/plugin-commonjs';
-import url from '@rollup/plugin-url';
-import svelte from 'rollup-plugin-svelte';
-import babel from '@rollup/plugin-babel';
-import { terser } from 'rollup-plugin-terser';
-import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
+import url from '@rollup/plugin-url';
+import path from 'path';
+import css from 'rollup-plugin-css-only';
+import svelte from 'rollup-plugin-svelte';
+import { terser } from 'rollup-plugin-terser';
 import config from 'sapper/config/rollup.js';
+import sveltePreprocess from 'svelte-preprocess';
 import pkg from './package.json';
 
 const mode = process.env.NODE_ENV;
@@ -82,6 +83,7 @@ export default {
 				'process.browser': false,
 				'process.env.NODE_ENV': JSON.stringify(mode)
 			}),
+			css({ output: "public/carbon.css" }),
 			svelte({
 				preprocess: sveltePreprocess(),
 				compilerOptions: {

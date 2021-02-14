@@ -24,7 +24,12 @@ const valid: (feeds: Feed[]) => boolean = (feeds) => {
       // optional URLs
       new URL(feed.imageUrl);
       acceptedKeys++;
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+      if (feed.imageUrl === "") {
+        acceptedKeys++;
+      }
+    }
     if (names.has(feed.name)) {
       return false;
     } else {
