@@ -1,7 +1,7 @@
 {
   "name": "discorss",
   "description": "Manage Discord RSS feeds using webhooks",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "scripts": {
     "dev": "sapper dev",
     "build": "sapper build --legacy",
