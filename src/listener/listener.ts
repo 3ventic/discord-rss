@@ -9,6 +9,7 @@ const parser = new Parser();
 export const handleFeeds = async () => {
   if (await Storage.getItem(Processing)) {
     console.log("still processing, skipping");
+    return;
   }
   console.log("starting processing");
   await Storage.setItem(Processing, true);
