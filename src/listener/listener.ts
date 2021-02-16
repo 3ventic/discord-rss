@@ -7,32 +7,37 @@ import type { DiscordEmbed, Feed } from "../types";
 const parser = new Parser();
 
 export const handleFeeds = async () => {
+  if (await Storage.getItem(Processing)) {
+    console.log("still processing, skipping");
+  }
+  console.log("starting processing");
   await Storage.setItem(Processing, true);
   const feeds = (await Storage.getItem(DBName)) as Array<Feed>;
   for (let i = 0; i < feeds.length; i++) {
     console.log(feeds[i].name);
     const feed = await parser.parseURL(feeds[i].url);
     const items = feed.items
-      .filter((item) => item.pubDate)
+      .filter((item) => item.isoDate)
       .filter(
         (item) =>
           !feeds[i].lastItem ||
-          new Date(item.pubDate!) > new Date(feeds[i].lastItem!.pubDate!)
+          new Date(item.isoDate!) > new Date(feeds[i].lastItem!.isoDate!)
       )
       .sort(
         (a, b) =>
-          new Date(b.pubDate!).getTime() - new Date(a.pubDate!).getTime()
+          new Date(b.isoDate!).getTime() - new Date(a.isoDate!).getTime()
       );
     if (items.length > 0) {
       feeds[i].lastItem = items[0];
       for (let item of items) {
         console.log(item.link);
+        let embeds: DiscordEmbed[] = [];
         try {
           let embed: DiscordEmbed = {
             title: item.title,
             description: htmlToMarkdown(item.contentSnippet),
             url: item.link,
-            timestamp: new Date(item.pubDate!).toISOString(),
+            timestamp: new Date(item.isoDate!).toISOString(),
             color: getColor(item.content),
           };
           if (feeds[i].imageUrl) {
@@ -40,31 +45,41 @@ export const handleFeeds = async () => {
               url: feeds[i].imageUrl,
             };
           }
-          let result = await fetch(`${feeds[i].hookUrl}?wait=true`, {
-            method: "post",
-            headers: {
-              "content-type": "application/json",
-            },
-            body: JSON.stringify({
-              allowed_mentions: [],
-              embeds: [embed],
-              username: feeds[i].name,
-            }),
-          });
-          if (result.status !== 200) {
-            throw new Error(
-              `${item.link}: ${result.status} ${result.statusText}`
-            );
+          embeds.push(embed);
+          if (embeds.length === 10) {
+            await executeHook(feeds[i], embeds);
+            embeds = [];
           }
         } catch (e) {
           console.error("error posting webhook", e);
+        }
+        if (embeds.length > 0) {
+          await executeHook(feeds[i], embeds);
         }
       }
     }
   }
   await Storage.setItem(DBName, feeds);
   await Storage.removeItem(Processing);
+  console.log("ended processing");
 };
+
+async function executeHook(feed: Feed, embeds: DiscordEmbed[]) {
+  let result = await fetch(`${feed.hookUrl}?wait=true`, {
+    method: "post",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      allowed_mentions: [],
+      embeds: [embeds],
+      username: feed.name,
+    }),
+  });
+  if (result.status !== 200) {
+    throw new Error(`${embeds[0].url}: ${result.status} ${result.statusText}`);
+  }
+}
 
 function getColor(content: string | undefined): number {
   if (typeof content === "undefined") {
