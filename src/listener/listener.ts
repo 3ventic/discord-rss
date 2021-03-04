@@ -30,9 +30,9 @@ export const handleFeeds = async () => {
       );
     if (items.length > 0) {
       feeds[i].lastItem = items[0];
+      let embeds: DiscordEmbed[] = [];
       for (let item of items) {
         console.log(item.link);
-        let embeds: DiscordEmbed[] = [];
         try {
           let embed: DiscordEmbed = {
             title: item.title,
@@ -54,8 +54,12 @@ export const handleFeeds = async () => {
         } catch (e) {
           console.error("error posting webhook", e);
         }
-        if (embeds.length > 0) {
+      }
+      if (embeds.length > 0) {
+        try {
           await executeHook(feeds[i], embeds);
+        } catch (e) {
+          console.error("error posting webhook", e);
         }
       }
     }
