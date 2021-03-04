@@ -77,7 +77,7 @@ async function executeHook(feed: Feed, embeds: DiscordEmbed[]) {
     },
     body: JSON.stringify({
       allowed_mentions: [],
-      embeds: [embeds],
+      embeds: embeds,
       username: feed.name,
     }),
   });
