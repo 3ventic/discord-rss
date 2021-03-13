@@ -13,60 +13,65 @@ export const handleFeeds = async () => {
   }
   console.log("starting processing");
   await Storage.setItem(Processing, true);
-  const feeds = (await Storage.getItem(DBName)) as Array<Feed>;
-  for (let i = 0; i < feeds.length; i++) {
-    console.log(feeds[i].name);
-    const feed = await parser.parseURL(feeds[i].url);
-    const items = feed.items
-      .filter((item) => item.isoDate)
-      .filter(
-        (item) =>
-          !feeds[i].lastItem ||
-          new Date(item.isoDate!) > new Date(feeds[i].lastItem!.isoDate!)
-      )
-      .sort(
-        (a, b) =>
-          new Date(b.isoDate!).getTime() - new Date(a.isoDate!).getTime()
-      );
-    if (items.length > 0) {
-      feeds[i].lastItem = items[0];
-      let embeds: DiscordEmbed[] = [];
-      for (let item of items) {
-        console.log(item.link);
-        try {
-          let embed: DiscordEmbed = {
-            title: item.title,
-            description: htmlToMarkdown(item.contentSnippet),
-            url: item.link,
-            timestamp: new Date(item.isoDate!).toISOString(),
-            color: getColor(item.content),
-          };
-          if (feeds[i].imageUrl) {
-            embed.thumbnail = {
-              url: feeds[i].imageUrl,
+  try {
+    const feeds = (await Storage.getItem(DBName)) as Array<Feed>;
+    for (let i = 0; i < feeds.length; i++) {
+      console.log(feeds[i].name);
+      const feed = await parser.parseURL(feeds[i].url);
+      const items = feed.items
+        .filter((item) => item.isoDate)
+        .filter(
+          (item) =>
+            !feeds[i].lastItem ||
+            new Date(item.isoDate!) > new Date(feeds[i].lastItem!.isoDate!)
+        )
+        .sort(
+          (a, b) =>
+            new Date(b.isoDate!).getTime() - new Date(a.isoDate!).getTime()
+        );
+      if (items.length > 0) {
+        feeds[i].lastItem = items[0];
+        let embeds: DiscordEmbed[] = [];
+        for (let item of items) {
+          console.log(item.link);
+          try {
+            let embed: DiscordEmbed = {
+              title: item.title,
+              description: htmlToMarkdown(item.contentSnippet),
+              url: item.link,
+              timestamp: new Date(item.isoDate!).toISOString(),
+              color: getColor(item.content),
             };
+            if (feeds[i].imageUrl) {
+              embed.thumbnail = {
+                url: feeds[i].imageUrl,
+              };
+            }
+            embeds.push(embed);
+            if (embeds.length === 10) {
+              await executeHook(feeds[i], embeds);
+              embeds = [];
+            }
+          } catch (e) {
+            console.error("error posting webhook", e);
           }
-          embeds.push(embed);
-          if (embeds.length === 10) {
-            await executeHook(feeds[i], embeds);
-            embeds = [];
-          }
-        } catch (e) {
-          console.error("error posting webhook", e);
         }
-      }
-      if (embeds.length > 0) {
-        try {
-          await executeHook(feeds[i], embeds);
-        } catch (e) {
-          console.error("error posting webhook", e);
+        if (embeds.length > 0) {
+          try {
+            await executeHook(feeds[i], embeds);
+          } catch (e) {
+            console.error("error posting webhook", e);
+          }
         }
       }
     }
+    await Storage.setItem(DBName, feeds);
+  } catch (e) {
+    console.error("error processing", e);
+  } finally {
+    await Storage.removeItem(Processing);
+    console.log("ended processing");
   }
-  await Storage.setItem(DBName, feeds);
-  await Storage.removeItem(Processing);
-  console.log("ended processing");
 };
 
 async function executeHook(feed: Feed, embeds: DiscordEmbed[]) {
