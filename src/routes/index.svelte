@@ -187,4 +187,7 @@
   .margin-left {
     margin-left: 0.5em;
   }
+  .hidden {
+    display: none;
+  }
 </style>
