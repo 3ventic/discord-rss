@@ -1,8 +1,6 @@
-import type { Item } from "rss-parser";
-
 export type Feed = {
   url: string;
-  lastItem?: Item;
+  lastItem?: { isoDate: string };
   hookUrl: string;
   name: string;
   imageUrl: string;

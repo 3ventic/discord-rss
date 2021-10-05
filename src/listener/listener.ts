@@ -16,7 +16,12 @@ export const handleFeeds = async () => {
   try {
     const feeds = (await Storage.getItem(DBName)) as Array<Feed>;
     for (let i = 0; i < feeds.length; i++) {
-      console.log(feeds[i].name);
+      console.log("feed:", feeds[i].name);
+      if (!feeds[i].lastItem) {
+        feeds[i].lastItem = { isoDate: new Date().toISOString() };
+        console.log("new feed, skipping");
+        continue;
+      }
       const feed = await parser.parseURL(feeds[i].url);
       const items = feed.items
         .filter((item) => item.isoDate)
@@ -29,8 +34,10 @@ export const handleFeeds = async () => {
           (a, b) =>
             new Date(b.isoDate!).getTime() - new Date(a.isoDate!).getTime()
         );
+      console.log("previous item:", feeds[i].lastItem);
+      console.log("items:", items);
       if (items.length > 0) {
-        feeds[i].lastItem = items[0];
+        feeds[i].lastItem = { isoDate: items[0].isoDate! };
         let embeds: DiscordEmbed[] = [];
         for (let item of items) {
           console.log(item.link);
