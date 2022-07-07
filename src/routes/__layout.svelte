@@ -3,6 +3,16 @@
 	import type { CarbonTheme } from "carbon-components-svelte/types/Theme/Theme.svelte";
 	import { onMount } from "svelte";
 
+	import { goto } from "$app/navigation";
+	import { session } from "$app/stores";
+	import type { AppSession } from "src/types";
+	const signedIn = !!($session as AppSession).user;
+	onMount(() => {
+		if (!signedIn) {
+			goto("/api/auth/signin/discord?redirect=/");
+		}
+	});
+
 	let theme: CarbonTheme = "g10";
 	let loading = true;
 
@@ -32,7 +42,7 @@
 		<div class="loading">
 			<Loading withOverlay={false} />
 		</div>
-	{:else}
+	{:else if $session["user"]?.isAuthorized}
 		<div class="header">
 			<div />
 			<h1>Discord RSS Feed Manager</h1>
@@ -50,6 +60,8 @@
 			/>
 		</div>
 		<slot />
+	{:else}
+		<div>Unauthorized. <a href="/api/auth/signout">Sign out</a></div>
 	{/if}
 	<footer><Link href="https://3v.fi/">3v.fi</Link></footer>
 </main>

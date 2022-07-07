@@ -4,7 +4,7 @@
 	"version": "0.11.0",
 	"scripts": {
 		"sync": "svelte-kit sync",
-		"dev": "vite dev",
+		"dev": "vite dev --https",
 		"build": "vite build",
 		"start": "node build",
 		"build:runner": "tsc --module es2022 --target es2022 --moduleResolution node --allowSyntheticDefaultImports true --outDir runner src/runner.ts",
@@ -14,7 +14,8 @@
 	"dependencies": {
 		"node-fetch": "^2.6.1",
 		"redis": "^4.2.0",
-		"rss-parser": "^3.10.0"
+		"rss-parser": "^3.10.0",
+		"sk-auth": "^0.4.1"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-node": "^1.0.0-next.78",
