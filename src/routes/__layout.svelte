@@ -5,7 +5,7 @@
 
 	import { goto } from "$app/navigation";
 	import { session } from "$app/stores";
-	import type { AppSession } from "src/types";
+	import type { AppSession } from "src/auth";
 	const signedIn = !!($session as AppSession).user;
 	onMount(() => {
 		if (!signedIn) {
