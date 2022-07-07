@@ -1,15 +1,19 @@
+import adapter from "@sveltejs/adapter-node";
+import { optimizeCarbonImports } from "carbon-preprocess-svelte";
 import { sveltePreprocess } from "svelte-preprocess/dist/autoProcess.js";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// options passed to svelte.compile (https://svelte.dev/docs#compile-time-svelte-compile)
-	compilerOptions: {},
+	compilerOptions: {
+		enableSourcemap: true,
+	},
 
 	// an array of file extensions that should be treated as Svelte components
 	extensions: [".svelte"],
 
 	kit: {
-		adapter: undefined,
+		adapter: adapter(),
 		alias: {},
 		appDir: "_app",
 		browser: {
@@ -72,7 +76,7 @@ const config = {
 	},
 
 	// options passed to svelte.preprocess (https://svelte.dev/docs#compile-time-svelte-preprocess)
-	preprocess: sveltePreprocess(),
+	preprocess: [sveltePreprocess(), optimizeCarbonImports()],
 };
 
 export default config;

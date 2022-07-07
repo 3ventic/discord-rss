@@ -7,6 +7,10 @@ class Storage {
 		this.redis = createClient({
 			url: redisUrl,
 		});
+		this.redis.connect();
+		this.redis.on("error", (err) => {
+			console.error("redis error", err);
+		});
 	}
 
 	public async removeItem(key: string) {

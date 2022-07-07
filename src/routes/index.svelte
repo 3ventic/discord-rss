@@ -1,39 +1,22 @@
-<script context="module" lang="ts">
-	export async function load({ fetch }) {
-		const res = await fetch(`index.json`);
-		const data = await res.json();
-
-		if (res.status === 200) {
-			return { feeds: data };
-		} else {
-			return { feeds: [], error: [res.status, data.message] };
-		}
-	}
-</script>
-
 <script lang="ts">
+	import "carbon-components-svelte/css/all.css";
+
 	import { Button, TextInput } from "carbon-components-svelte";
 	import PhoneOutgoingFilled20 from "carbon-icons-svelte/lib/PhoneOutgoingFilled20";
 	import TrashCan20 from "carbon-icons-svelte/lib/TrashCan20";
 	import type { DiscordEmbed, Feed } from "../types";
 
 	export let feeds: Feed[];
-	export let error: [number, string];
 	let fds = feeds;
 	let saving = false;
 	let status = "";
 	let testing = false;
 
-	if (error) {
-		console.error(error);
-		status = `Error: ${error[1]}`;
-	}
-
 	const save = async () => {
 		saving = true;
 		status = `Saving...`;
 		try {
-			let result = await fetch(`index.json`, {
+			let result = await fetch(`update.json`, {
 				method: "POST",
 				headers: {
 					"content-type": "application/json",
@@ -60,8 +43,6 @@
 			},
 		];
 	};
-
-	$: console.log("feeds changed:", fds);
 
 	const testHook = async (feed: Feed) => {
 		testing = true;
@@ -91,13 +72,10 @@
 </script>
 
 <svelte:head>
-	<title>RSS Settings</title>
+	<title>RSS Feeds - Discord RSS Manager</title>
 </svelte:head>
 
 <div class="main">
-	<div class="header">
-		<h1>Discord RSS Feed Manager</h1>
-	</div>
 	{#each fds as feed, i}
 		<div class="feedwrap">
 			<div class="feedhead">
@@ -127,7 +105,7 @@
 				<TextInput
 					inline
 					labelText="Discord Webhook URL"
-					type="url"
+					type="password"
 					bind:value={feed.hookUrl}
 				/>
 				<div class="margin-left">
@@ -168,6 +146,7 @@
 <style>
 	.main {
 		width: 90%;
+		margin: 0 auto;
 	}
 	.feedhead {
 		display: flex;
@@ -182,10 +161,6 @@
 	.actions {
 		text-align: center;
 	}
-	.header,
-	h1 {
-		text-align: center;
-	}
 	.thumbnail {
 		max-height: 2em;
 		max-width: 5em;
@@ -195,5 +170,11 @@
 	}
 	.hidden {
 		display: none;
+	}
+	.loading {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100vh;
 	}
 </style>

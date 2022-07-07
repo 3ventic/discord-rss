@@ -1,8 +1,8 @@
 import fetch from "node-fetch";
 import Parser from "rss-parser";
-import { DBName, Processing } from "../const";
-import Storage from "../storage";
-import type { DiscordEmbed, Feed } from "../types";
+import { DBName, Processing } from "../const.js";
+import Storage from "../storage.js";
+import type { DiscordEmbed, Feed } from "../types.js";
 
 const parser = new Parser();
 

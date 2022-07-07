@@ -1,6 +1,6 @@
-import { Processing } from "./const";
-import { handleFeeds } from "./listener/listener";
-import Storage from "./storage";
+import { Processing } from "./const.js";
+import { handleFeeds } from "./listener/listener.js";
+import Storage from "./storage.js";
 
 const { INTERVAL } = process.env;
 
