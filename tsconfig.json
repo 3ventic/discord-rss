@@ -1,12 +1,15 @@
 {
-	"extends": "@tsconfig/svelte/tsconfig.json",
+	"extends": "./.svelte-kit/tsconfig.json",
 	"compilerOptions": {
 		"lib": [
 			"DOM",
 			"ES2017",
 			"WebWorker"
 		],
-		"strictNullChecks": true
+		"strictNullChecks": true,
+		"module": "es2022",
+		"target": "es2022",
+		"allowSyntheticDefaultImports": true,
 	},
 	"include": [
 		"src/**/*",

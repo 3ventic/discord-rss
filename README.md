@@ -6,11 +6,11 @@ RSS and Atom feeds to Discord webhooks with web management UI.
 
 ### Docker
 
-Pull and run from the docker image from the GitHub repository. Mount /tmp/appdata for persistence.
+Pull and run from the docker image from the GitHub repository. See configuration.
 
 ### Native
 
-Install node 14+ and npm, and run `npm install`, `npm run build`, and `npm run start`
+Install node 18+ and npm, and run `npm install`, `npm run build`, and `npm run start`
 
 ### Configuration
 
