@@ -42,7 +42,15 @@ const valid: (feeds: Feed[]) => boolean = (feeds) => {
 	return true;
 };
 
-export async function post({ request }) {
+export async function post({ request, locals }) {
+	if (!locals?.user?.isAuthorized) {
+		return {
+			status: 403,
+			body: {
+				message: "forbidden",
+			},
+		};
+	}
 	if (await Storage.getString(Processing)) {
 		return {
 			status: 503,
