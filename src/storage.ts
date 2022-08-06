@@ -1,23 +1,46 @@
-import NodePersist, { LocalStorage } from "node-persist";
-import { DBName } from "./const";
+import type { RedisClientType } from "@redis/client";
+import { createClient } from "redis";
 
 class Storage {
-  private strg: LocalStorage;
-  constructor() {
-    this.strg = NodePersist.create({ dir: "/tmp/appdata" });
-  }
+	private redis: RedisClientType;
+	constructor(redisUrl: string) {
+		this.redis = createClient({
+			url: redisUrl,
+		});
+		this.redis.connect();
+		this.redis.on("error", (err) => {
+			console.error("redis error", err);
+		});
+	}
 
-  public build = async () => {
-    if (!(await this.strg.getItem(DBName))) {
-      this.strg.setItem(DBName, []);
-    }
-  };
+	public async removeItem(key: string) {
+		return await this.redis.del(key);
+	}
 
-  get storage(): LocalStorage {
-    return this.strg;
-  }
+	public async getString(key: string) {
+		return await this.redis.get(key);
+	}
+
+	public async getItem<T>(key: string): Promise<T | null> {
+		const value = await this.getString(key);
+		if (value == null) {
+			return null;
+		}
+		return JSON.parse(value);
+	}
+
+	public async setString(key: string, value: string) {
+		return await this.redis.set(key, value);
+	}
+
+	public async setItem<T>(key: string, value: T) {
+		return await this.setString(key, JSON.stringify(value));
+	}
 }
 
-let instance: Storage = new Storage();
-instance.build();
-export default instance.storage;
+if (!process.env.REDIS_URL) {
+	throw new Error("REDIS_URL env var is not defined");
+}
+
+let instance: Storage = new Storage(process.env.REDIS_URL);
+export default instance;
