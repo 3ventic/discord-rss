@@ -34,6 +34,17 @@ const valid: (feeds: Feed[]) => boolean = (feeds) => {
 			names.set(feed.name, Object.create(null));
 			acceptedKeys++;
 		}
+		// check for valid Date() format
+		if (!isNaN(new Date(feed.lastItem.isoDate).getDate())) {
+			acceptedKeys++;
+		} else {
+			if (feed.lastItem.isoDate === "") {
+				acceptedKeys++;
+			} else {
+				return false;
+			}
+		}
+
 		// ensure no unknown keys made their way in
 		if (Object.keys(feed).length > acceptedKeys) {
 			return false;
@@ -68,14 +79,7 @@ export async function post({ request, locals }) {
 			body: { message: "invalid feeds" },
 		};
 	}
-	const oldFeeds = (await Storage.getItem<Array<Feed>>(DBName)) ?? [];
-	for (let i = 0; i < feeds.length; i++) {
-		for (let old of oldFeeds) {
-			if (old.url === feeds[i].url) {
-				feeds[i].lastItem = old.lastItem;
-			}
-		}
-	}
+	
 	await Storage.setItem(DBName, feeds);
 
 	return {
