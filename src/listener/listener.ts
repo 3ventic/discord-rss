@@ -92,6 +92,15 @@ function truncateString(str: string, to: number) {
 }
 
 async function executeHook(feed: Feed, embeds: DiscordEmbed[]) {
+	let content = '';
+	let feedName = feed.name;
+
+	if (process.env.SIMPLE) {
+		content = `**${feedName}**\n${embeds[0].title}\n${embeds[0].url}`;
+		embeds = [];
+		feedName = '';
+	}
+
 	let result = await fetch(`${feed.hookUrl}?wait=true`, {
 		method: "post",
 		headers: {
@@ -99,8 +108,9 @@ async function executeHook(feed: Feed, embeds: DiscordEmbed[]) {
 		},
 		body: JSON.stringify({
 			allowed_mentions: [],
+			content: content,
 			embeds: embeds,
-			username: feed.name,
+			username: feedName,
 		}),
 	});
 	if (result.status !== 200) {
