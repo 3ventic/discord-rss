@@ -40,6 +40,7 @@
 				name: "",
 				url: "",
 				imageUrl: "",
+				lastItem: { isoDate: "" }
 			},
 		];
 	};
@@ -91,7 +92,11 @@
 				/>
 			</div>
 			<div class="feeditem">
-				<TextInput inline labelText="Title" bind:value={feed.name} />
+				<TextInput
+					inline
+					labelText="Title"
+					bind:value={feed.name}
+				/>
 			</div>
 			<div class="feeditem">
 				<TextInput
@@ -132,6 +137,13 @@
 					src={feed.imageUrl}
 					alt="thumbnail"
 					class={`thumbnail margin-left ${feed.imageUrl ? "" : "hidden"}`}
+				/>
+			</div>
+			<div class="feeditem">
+				<TextInput
+					inline
+					labelText="Last Item"
+					bind:value={feed.lastItem.isoDate}
 				/>
 			</div>
 		</div>

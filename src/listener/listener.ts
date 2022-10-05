@@ -21,7 +21,7 @@ export const handleFeeds = async () => {
 		}
 		for (let i = 0; i < feeds.length; i++) {
 			console.log("feed:", feeds[i].name);
-			if (!feeds[i].lastItem) {
+			if (feeds[i].lastItem?.isoDate === "") {
 				feeds[i].lastItem = { isoDate: new Date().toISOString() };
 				console.log("new feed, skipping");
 				continue;

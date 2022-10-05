@@ -13,7 +13,7 @@ export async function get({ locals }) {
 		},
 		body: {
 			feeds: feed.map((f) => {
-				f.lastItem = undefined;
+				f.lastItem = { isoDate: f.lastItem.isoDate };
 				return f;
 			}),
 		},
