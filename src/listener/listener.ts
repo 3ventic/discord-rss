@@ -21,7 +21,7 @@ export const handleFeeds = async () => {
 		}
 		for (let i = 0; i < feeds.length; i++) {
 			console.log("feed:", feeds[i].name);
-			if (feeds[i].lastItem?.isoDate === "") {
+			if (!feeds[i].lastItem?.isoDate) {
 				feeds[i].lastItem = { isoDate: new Date().toISOString() };
 				console.log("new feed, skipping");
 				continue;
@@ -47,8 +47,10 @@ export const handleFeeds = async () => {
 					console.log(item.link);
 					try {
 						let embed: DiscordEmbed = {
-							title: item.title,
-							description: htmlToMarkdown(item.contentSnippet),
+							title: truncateString(item.title ?? "", 250),
+							description: htmlToMarkdown(
+								truncateString(item.contentSnippet ?? "", 4000)
+							),
 							url: item.link,
 							timestamp: new Date(item.isoDate!).toISOString(),
 							color: getColor(item.content),
@@ -84,6 +86,10 @@ export const handleFeeds = async () => {
 		console.log("ended processing");
 	}
 };
+
+function truncateString(str: string, to: number) {
+	return str.length > to ? str.substring(0, to) + "..." : str;
+}
 
 async function executeHook(feed: Feed, embeds: DiscordEmbed[]) {
 	let result = await fetch(`${feed.hookUrl}?wait=true`, {
