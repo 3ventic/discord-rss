@@ -10,6 +10,10 @@ Install node 18+ and npm, and run `npm install`, `npm run sync`.
 For the web interface run `npm run build` and `npm start`.
 For the RSS poller run `npm run build:runner` and `npm run runner`.
 
+### Railway
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/2LnViG?referralCode=6hr3nf)
+
 ### Configuration
 
 The service can be configured using environment variables:
