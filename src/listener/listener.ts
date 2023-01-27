@@ -1,3 +1,4 @@
+import { RequestQuote16 } from "carbon-icons-svelte";
 import fetch from "node-fetch";
 import Parser from "rss-parser";
 import { DBName, Processing } from "../const.js";
@@ -92,30 +93,39 @@ function truncateString(str: string, to: number) {
 }
 
 async function executeHook(feed: Feed, embeds: DiscordEmbed[]) {
-	let content = '';
-	let feedName = feed.name;
+	let username: any = feed.name;
+	let payload = {
+		allowed_mentions: [],
+		content: feed.name,
+		embeds: embeds,
+		username: username
+	};
 
 	if (process.env.SIMPLE) {
-		content = `**${feedName}**\n${embeds[0].title}\n${embeds[0].url}`;
-		embeds = [];
-		feedName = '';
+		payload.content = `**${feed.name}**\n${embeds[0].title}\n${embeds[0].url}`;
+		payload.embeds = [];
+		delete payload['username'];
 	}
 
-	let result = await fetch(`${feed.hookUrl}?wait=true`, {
-		method: "post",
-		headers: {
-			"content-type": "application/json",
-		},
-		body: JSON.stringify({
-			allowed_mentions: [],
-			content: content,
-			embeds: embeds,
-			username: feedName,
-		}),
-	});
-	if (result.status !== 200) {
-		throw new Error(`${embeds[0].url}: ${result.status} ${result.statusText}`);
-	}
+	async function response(url = '', data = {}) {
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            "Content-type": "application/json;"
+        },
+        body: JSON.stringify(data)
+    });
+    
+    return response.json();
+}
+
+	response(`${feed.hookUrl}?wait=true`, payload )
+		.then(json => {
+			console.log(json) // Handle success
+		})
+		.catch(err => {
+			console.log(err) // Handle errors
+		});
 }
 
 function getColor(content: string | undefined): number {
