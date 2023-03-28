@@ -20,6 +20,7 @@ The service can be configured using environment variables:
 
 - `PORT` (default 3000) port to listen on
 - `INTERVAL` (default 5) minutes between checks
+- `SIMPLE` (default false) post feed, title, and url text only
 - `REDIS_URL` (required) redis connect url
 - `DISCORD_CLIENT_ID` (required) https://discord.com/developers/applications
 - `DISCORD_CLIENT_SECRET` (required) https://discord.com/developers/applications
