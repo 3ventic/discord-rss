@@ -63,7 +63,9 @@
 				"content-type": "application/json",
 			},
 			body: JSON.stringify({
-				allowed_mentions: [],
+				allowed_mentions: {
+					parse: []
+				},
 				embeds: [embed],
 				username: feed.name,
 			}),
